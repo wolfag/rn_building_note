@@ -131,16 +131,16 @@ const App = () => {
               <Draggable
                 key={p.id}
                 x={
-                  p.x -
-                  (imgSize.w / 2 - window.width / 2) -
+                  p.x * moveData.scale -
+                  ((imgSize.w * moveData.scale) / 2 - window.width / 2) -
                   PointSize +
-                  moveData.positionX
+                  moveData.positionX * moveData.scale
                 }
                 y={
-                  p.y -
-                  (imgSize.h / 2 - window.height / 2) -
+                  p.y * moveData.scale -
+                  ((imgSize.h * moveData.scale) / 2 - window.height / 2) -
                   PointSize +
-                  moveData.positionY
+                  moveData.positionY * moveData.scale
                 }
                 renderSize={PointSize}
                 renderColor="black"
