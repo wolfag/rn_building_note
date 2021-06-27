@@ -16,6 +16,8 @@ const {width, height} = Dimensions.get('window');
 const PointSize = 50;
 const Scale = 1;
 
+// const imgPath =
+// 'https://images.vexels.com/media/users/3/193297/isolated/lists/4752adfc1ac1732ee4ebb62297016c15-covid-19-cartoon-icon.png';
 const imgPath =
   'https://wcs.smartdraw.com/floor-plan/img/achitectural-drawig-example.png?bn=15100111798';
 
@@ -24,8 +26,17 @@ const App = () => {
   const [points, setPoints] = useState([]);
   const [layout, setLayout] = useState({});
   const [window, setWindow] = useState({width, height});
+  const [moveData, setMoveData] = useState({
+    positionX: 0,
+    positionY: 0,
+    zoomCurrentDistance: 0,
+    scale: 1,
+  });
+
   const timeout = useRef();
   const currentClick = useRef();
+
+  console.log({imgSize});
 
   useEffect(() => {
     Image.getSize(imgPath, (w, h) => {
@@ -69,23 +80,6 @@ const App = () => {
               locationY: e.nativeEvent.locationY,
             }),
           );
-          // timeout.current = setTimeout(() => {
-          //   Alert.alert(
-          //     'Add new marker',
-          //     'Do you want to add new marker here?',
-          //     [
-          //       {
-          //         text: 'Add',
-          //         onPress: addPoint,
-          //       },
-          //       {
-          //         text: 'Cancel',
-          //         onPress: null,
-          //         style: 'cancel',
-          //       },
-          //     ],
-          //   );
-          // }, 300);
         }}
         onTouchEnd={() => {
           if (timeout.current) {
@@ -101,23 +95,15 @@ const App = () => {
           style={{
             borderWidth: 2,
             borderColor: 'red',
+            overflow: 'hidden',
           }}
           onLayout={e => {
             setLayout(e.nativeEvent.layout);
-            // console.log({layout: e.nativeEvent});
           }}>
-          {/* <Image
-            source={{uri: imgPath}}
-            style={{width: imgSize.w, height: imgSize.h}}
-            resizeMode="cover"
-            onLayout={e => {
-              // console.log({l: e.nativeEvent.layout});
-              // setLayout(e.nativeEvent.layout);
-            }}
-          /> */}
           <ImageZoom
             onMove={e => {
               console.log({move: e});
+              setMoveData(e);
             }}
             onClick={e => {
               setPoints([
@@ -129,8 +115,8 @@ const App = () => {
                 },
               ]);
             }}
-            cropWidth={width}
-            cropHeight={height}
+            cropWidth={Math.max(Math.min(imgSize.w, width), width) - 40}
+            cropHeight={Math.max(Math.min(imgSize.h, height), height) - 40}
             imageWidth={imgSize.w}
             imageHeight={imgSize.h}>
             <Image
@@ -140,49 +126,35 @@ const App = () => {
               }}
             />
           </ImageZoom>
+          {points.map((p, i) => {
+            return (
+              <Draggable
+                key={p.id}
+                x={
+                  p.x -
+                  (imgSize.w / 2 - window.width / 2) -
+                  PointSize +
+                  moveData.positionX * moveData.scale
+                }
+                y={
+                  p.y -
+                  (imgSize.h / 2 - window.height / 2) -
+                  PointSize +
+                  moveData.positionY * moveData.scale
+                }
+                renderSize={PointSize}
+                renderColor="black"
+                renderText={`${i}`}
+                isCircle
+                onPress={() => alert('touched!!')}
+                onPressOut={e => {
+                  console.log({e: e.nativeEvent});
+                }}
+              />
+            );
+          })}
         </View>
       </View>
-      {points.map((p, i) => {
-        return (
-          <Draggable
-            key={p.id}
-            x={p.x - (imgSize.w / 2 - window.width / 2) - PointSize / 2}
-            y={p.y - (imgSize.h / 2 - window.height / 2) - PointSize / 2}
-            renderSize={PointSize}
-            renderColor="black"
-            renderText={`${i}`}
-            isCircle
-            onPress={() => alert('touched!!')}
-            onPressOut={e => {
-              console.log({e: e.nativeEvent});
-            }}
-          />
-        );
-      })}
-      <Draggable
-        x={0}
-        y={0}
-        renderSize={56}
-        renderColor="black"
-        renderText="0"
-        isCircle
-        onPress={() => alert('touched!!')}
-        onPressOut={e => {
-          console.log({e: e.nativeEvent});
-        }}
-      />
-      <Draggable
-        x={width - PointSize}
-        y={height - PointSize}
-        renderSize={56}
-        renderColor="black"
-        renderText="max"
-        isCircle
-        onPress={() => alert('touched!!')}
-        onPressOut={e => {
-          console.log({e: e.nativeEvent});
-        }}
-      />
     </SafeAreaView>
   );
 };
