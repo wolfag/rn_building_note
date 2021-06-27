@@ -134,13 +134,13 @@ const App = () => {
                   p.x -
                   (imgSize.w / 2 - window.width / 2) -
                   PointSize +
-                  moveData.positionX * moveData.scale
+                  moveData.positionX
                 }
                 y={
                   p.y -
                   (imgSize.h / 2 - window.height / 2) -
                   PointSize +
-                  moveData.positionY * moveData.scale
+                  moveData.positionY
                 }
                 renderSize={PointSize}
                 renderColor="black"
