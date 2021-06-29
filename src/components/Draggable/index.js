@@ -88,7 +88,7 @@ export default function Draggable(props) {
     (e, gestureState) => {
       isDragging.current = false;
       if (onDragRelease) {
-        onDragRelease(e.gestureState, getBounds());
+        onDragRelease(e, getBounds());
         onRelease(e, true);
       }
       if (shouldReverse) {
